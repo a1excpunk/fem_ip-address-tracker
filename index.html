@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IP Address Tracker</title>
+
+    <!-- Leaflet CSS -->
+    <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+  />
+
+  <!-- Leaflet JS -->
+  <script
+    src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+  ></script>
+  
+  <style>
+    /* Basic styles for the map container */
+    #map {
+      height: 500px;
+      width: 100%;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header Section -->
+  <header>
+    <h1>IP Address Tracker</h1>
+  </header>
+
+  <!-- Search Section -->
+  <section class="search-section">
+    <div class="search-container">
+      <input 
+        type="text" 
+        placeholder="Search for any IP address or domain" 
+        class="search-input"
+      />
+      <button class="search-button"><img src="./images/icon-arrow.svg" alt="icon arrow"></button>
+    </div>
+  </section>
+
+  <!-- Info Section -->
+  <section class="info-section">
+    <div class="info-card">
+      <!-- IP Address -->
+      <div class="info-block">
+        <h4>IP Address</h4>
+        <p>192.212.174.101</p>
+      </div>
+      
+      <!-- Location -->
+      <div class="info-block">
+        <h4>Location</h4>
+        <p>Brooklyn, NY 10001</p>
+      </div>
+      
+      <!-- Timezone -->
+      <div class="info-block">
+        <h4>Timezone</h4>
+        <p>UTC -05:00</p>
+      </div>
+      
+      <!-- ISP -->
+      <div class="info-block">
+        <h4>ISP</h4>
+        <p>SpaceX Starlink</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Map Section -->
+  <section class="map-section">
+    <div id="map"></div> <!-- Placeholder for Map -->
+  </section>
+  <script>
+    // Initialize the map
+    const map = L.map('map').setView([41.69411, 44.83368], 13); // Default to Tbilisi City
+  
+    // Add OpenStreetMap tiles (free map layer)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+  
+    // Marker for the IP Location
+    const marker = L.marker([41.69411, 44.83368]).addTo(map);
+  
+    // Example: Update map dynamically based on coordinates
+    function updateMap(lat, lon) {
+      map.setView([lat, lon], 13); // Center map
+      marker.setLatLng([lat, lon]); // Move marker
+    }
+  
+    // Example Call: Dynamically update the map (replace these values dynamically)
+    // Example coordinates: Tbilisi City
+    updateMap(41.69411, 44.83368);
+  </script>
+  <script>
+    async function fetchIPDetails() {
+      const response = await fetch(`https://geo.ipify.org/api/v2/country,city?apiKey=YOUR_API_KEY&ipAddress=8.8.8.8`);
+      const data = await response.json();
+      
+      const lat = data.location.lat; // Latitude
+      const lon = data.location.lng; // Longitude
+  
+      // Update the map with new coordinates
+      updateMap(lat, lon);
+  
+      // Update details in the info section (example)
+      document.querySelector(".info-block-ip").innerText = data.ip;
+      document.querySelector(".info-block-location").innerText = `${data.location.city}, ${data.location.region}`;
+      document.querySelector(".info-block-timezone").innerText = `UTC ${data.location.timezone}`;
+      document.querySelector(".info-block-isp").innerText = data.isp;
+    }
+  
+    fetchIPDetails();
+  </script>
+  
+</body>
+</html>
